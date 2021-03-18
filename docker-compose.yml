@@ -1,0 +1,58 @@
+version: '3.7'
+
+services:
+    db:
+        image: postgres
+        environment:
+            - POSTGRES_DB=school
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - DJANGO_SETTINGS_MODULE=school.settings.settings
+
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
+    web:
+        build: .
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes:
+            - .:/code
+        environment:
+          - DJANGO_ALLOWED_HOSTS=0.0.0.0
+          - BROKER_URL=amqp://admin:mypass@rabbitmq:5672//
+
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+
+    rabbitmq:
+        image: rabbitmq:3.6.6
+        ports:
+          - "5672:5672"
+        environment:
+          - RABBITMQ_DEFAULT_USER=admin
+          - RABBITMQ_DEFAULT_PASS=mypass
+
+    celery_worker:
+        build: .
+        entrypoint: celery
+        command:  -A school.unit worker -E -l INFO -Q celery
+        environment:
+          - BROKER_URL=amqp://admin:mypass@rabbitmq:5672//
+          - EMAIL_HOST=${EMAIL_HOST}
+          - EMAIL_PORT=${EMAIL_PORT}
+          - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+          - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+          - DEFAULT_EMAIL_FROM=${DEFAULT_EMAIL_FROM}
+        volumes:
+          - .:/code
+        depends_on:
+          - web
+          - db
+          - rabbitmq
+
+
+volumes:
+  postgres_data:
