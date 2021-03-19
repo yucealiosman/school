@@ -17,7 +17,7 @@ class ClassHomeWorkNestedSerializer(BaseSerializer):
 class TeacherSerializer(BaseSerializer):
     class Meta:
         model = models.Teacher
-        fields = ('pk', 'name')
+        fields = ('pk', 'first_name')
 
 
 class ClassRoomSerializer(BaseSerializer):
@@ -33,4 +33,4 @@ class StudentSerializer(BaseSerializer):
 
     class Meta:
         model = models.Student
-        fields = ('pk', 'class_room', 'name', 'number', 'email')
+        fields = ('pk', 'class_room', 'first_name', 'number', 'email')

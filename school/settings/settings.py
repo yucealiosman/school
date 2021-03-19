@@ -27,12 +27,12 @@ DEBUG = (os.environ.get("DEBUG", "true").lower() == "true")
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
+    'school.apps.CustomAdminConfig',
 
     # 3rd parties
     'drf_yasg',
@@ -162,6 +162,7 @@ AUTHENTICATION_BACKENDS = [
 NOTIFY = (os.environ.get("NOTIFY_HOME_WORK", "true").lower() == "true")
 
 EMAIL_USE_TLS = True
+AUTH_USER_MODEL = 'unit.User'
 
 # Email configuration
 EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
