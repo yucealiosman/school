@@ -23,5 +23,10 @@ class TeacherHomeworkEmailAdapter(NotificationAdapter):
 
 class TeacherHomeworkPushNotificationAdapter(NotificationAdapter):
     def send(self, home_work, action):
-        send_homework_push_notification.apply_async(args=[],
-                                                    kwargs={})
+        student_pk_list = list(Student.objects.filter(
+            class_room=home_work.class_room).values_list("pk", flat=True))
+        title = home_work.title
+        teacher = home_work.teacher.pk
+        send_homework_push_notification.apply_async(
+            args=[student_pk_list, teacher, title, action],
+            kwargs={})

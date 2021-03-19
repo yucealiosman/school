@@ -41,7 +41,7 @@ class StudentViewSet(viewsets.ReadOnlyModelViewSet):
             "class_room").prefetch_related(
             Prefetch(
                 'class_room__teachers',
-                queryset=models.Teacher.objects.only('name', 'uuid'),
+                queryset=models.Teacher.objects.only('first_name', 'uuid'),
             )
         )
 
@@ -64,7 +64,7 @@ class StudentViewSet(viewsets.ReadOnlyModelViewSet):
             "class_room").prefetch_related(
             Prefetch(
                 'class_room__teachers',
-                queryset=models.Teacher.objects.only('name', 'uuid'),
+                queryset=models.Teacher.objects.only('first_name', 'uuid'),
             )
         )
 

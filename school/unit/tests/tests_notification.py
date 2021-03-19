@@ -30,9 +30,19 @@ class TeacherPushNotificationTest(TestCase):
     @patch(
         'school.unit.notification.send_homework_push_notification.apply_async')  # noqa
     def test_send_func(self, push_notify_mock):
-        hw = factories.ClassHomeWorkFactory()
+        teacher = factories.TeacherFactory()
+        classroom = factories.ClassRoomFactory(teachers=[teacher])
+        student = factories.StudentFactory(class_room=classroom)
+        factories.StudentFactory(
+            class_room=factories.ClassRoomFactory())
+        hw = factories.ClassHomeWorkFactory(teacher=teacher,
+                                            class_room=classroom)
+        expected_student_list = [student.pk]
+
         action = 'created'
         notification.TeacherHomeworkPushNotificationAdapter().send(
             home_work=hw,
             action=action)
-        push_notify_mock.assert_called_once_with(args=[], kwargs={})
+        push_notify_mock.assert_called_once_with(
+            args=[expected_student_list, hw.teacher.pk, hw.title, action],
+            kwargs={})
